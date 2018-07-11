@@ -2,10 +2,10 @@ import GPy
 import numpy as np
 from . import matrix
 
-def optimize(m0, X, Y):
+def optimize(mu0, X, Y):
     kernel = GPy.kern.RBF(1, active_dims=[1]) + GPy.kern.RBF(1, active_dims=[0])
 
-    XX = np.hstack((X, m0.predict(X)[0]))
+    XX = np.hstack((X, mu0))
     model = GPy.models.GPRegression(X=XX, Y=Y, kernel=kernel)
     model.optimize(max_iters=500)
     model.optimize_restarts(30, optimizer='bfgs', max_iters=1000)
@@ -22,10 +22,9 @@ def predict(model, mu0, C0, grid, nsamples=1000):
     # Predict level 2 at test points 
     tmp_m = np.zeros((nsamples, Nts))
     tmp_v = np.zeros((nsamples, Nts))
-    for i in range(0, nsamples):
+    for i in range(nsamples):
         XX = np.hstack((grid, matrix.Col(Z[i,:])))
         mu, v = model.predict_noiseless(XX)
-        #mu, v = model.predict(XX)
         tmp_m[i,:] = mu.flatten()
         tmp_v[i,:] = v.flatten()
 
