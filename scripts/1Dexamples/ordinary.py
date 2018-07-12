@@ -16,8 +16,6 @@ E[:, 1] += 109.15851906  # dissociation limit
 # Training set
 Nt = 8
 index = np.random.randint(0, len(E), size=Nt)
-print(index)
-#index = np.array([94, 15, 23, 11, 72, 13, 78, 36, 8, 69, 18, 88])
 T = np.array([E[i] for i in index])
 X, Y = np.split(T, 2, axis=1)
 
@@ -26,8 +24,10 @@ Ntest = 100
 Xtest = matrix.Col(np.linspace(0.8, 2.34, Ntest))
 
 # Train ordinary model
-m = ordinary.optimize(X, Y)
-mu, C = m.predict(Xtest, full_cov=True)
+m1_params = ordinary.my_optimize(X, Y)
+mu, C = ordinary.my_predict(Xtest, X, Y, *m1_params)
+#m = ordinary.optimize(X, Y)
+#mu, C = m.predict(Xtest, full_cov=True)
 S = np.sqrt(np.diag(C))
 mu, S = np.ravel(mu), np.ravel(S)
 rmse = 1000*matrix.RMSE(mu, E[:, 1])
