@@ -2,17 +2,18 @@ import GPy
 import numpy as np
 from . import matrix
 
-def optimize(mu0, X, Y):
+def optimize(mu0, X, Y, normalize=False, restarts=10):
     kernel = GPy.kern.RBF(1, active_dims=[1]) + GPy.kern.RBF(1, active_dims=[0])
 
     XX = np.hstack((X, mu0))
-    model = GPy.models.GPRegression(X=XX, Y=Y, kernel=kernel)
+    model = GPy.models.GPRegression(X=XX, Y=Y, kernel=kernel,
+                                    normalizer=normalize)
     model.optimize(max_iters=500)
-    model.optimize_restarts(30, optimizer='bfgs', max_iters=1000)
+    model.optimize_restarts(restarts, optimizer='bfgs', max_iters=1000)
 
     return model
 
-def predict(model, mu0, C0, grid, nsamples=1000):
+def predict(model, mu0, C0, grid, nsamples=500):
 
     Nts = len(grid)
 
