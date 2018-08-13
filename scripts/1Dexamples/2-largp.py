@@ -28,7 +28,7 @@ E2= np.loadtxt(os.path.join(E_path, 'mrci-pcv5z.tab'))
 
 # Set zeros at dissociation limits
 E0[:, 1] += 107.43802032
-E1[:, 1] += 109.15038716
+E1[:, 1] += 109.12399268
 E2[:, 1] += 109.15851906
 
 # Level 0 training set
