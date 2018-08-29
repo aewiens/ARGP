@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import matplotlib.mlab as ml
 from ARGP import ordinary
 
-E = np.loadtxt("surfaces/dense-ccsd-t-5z.dat", delimiter=',', skiprows=1)
+E = np.loadtxt("surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
 E[:, 2] += 76.172634420318
 
 np.random.seed(10)
