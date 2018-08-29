@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 import matplotlib.mlab as ml
 from ARGP import ordinary
 
-E = np.loadtxt("surfaces/dense-ccsd-t-tz.dat", delimiter=',', skiprows=1)
-E[:, 2] += 76.165071506835
+E = np.loadtxt("surfaces/dense-ccsd-t-5z.dat", delimiter=',', skiprows=1)
+E[:, 2] += 76.172634420318
 
 np.random.seed(10)
 
@@ -18,7 +18,7 @@ def RMSE(pred, truth):
 Xtest = E[:, 0:-1]
 
 # Create training set
-N1 = 160
+N1 = 100
 dim = 2
 
 idx = np.random.randint(0, len(E), size=N1)
@@ -34,7 +34,6 @@ mu, v = ordinary.predict(model, Xtest)
 Exact = E[:, 2].reshape(-1, 1)
 print("error: ", 1000 * RMSE(mu, Exact))
 
-"""
 # Exact plot
 X, Y = np.meshgrid(X1[:, 0], X1[:, 1])
 Exactplot = ml.griddata(Xtest[:,0], Xtest[:,1], Exact[:, 0], X, Y, interp='linear')
@@ -50,4 +49,3 @@ ax2 = fig.add_subplot(111, projection='3d')
 ax2.plot_surface(X, Y, GPplot, color = 'red', rstride=2, cstride=2,
                  linewidth=0, antialiased=True, shade = True, alpha = 0.6)
 plt.show()
-"""

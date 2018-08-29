@@ -61,7 +61,7 @@ active_dimensions = np.arange(0,dim)
 
 #  Ordinary GP
 kernel = GPy.kern.RBF(dim, ARD=True)
-model = ordinary.optimize(X1, Y1, kernel, normalize=False, Gaussian_noise=True)
+model = ordinary.optimize(X1, Y1, kernel, normalize=False)
 mu, v = ordinary.predict(model, Xtest)
 
 # Calculate error
@@ -77,7 +77,7 @@ fig = plt.figure(1)
 ax1 = fig.add_subplot(111, projection='3d')
 ax1.plot_surface(X, Y, Exactplot, color = '#377eb8', rstride=2, cstride=2,
                  linewidth=0, antialiased=True, shade = True, alpha = 0.6)
-plt.savefig("plots/ordinary-1.pdf")
+plt.savefig("MB-exact.pdf")
 
 # Plot ordinary GP prediction
 GPplot = ml.griddata(Xtest[:,0],Xtest[:,1], mu.flatten(), X, Y, interp = 'linear')
@@ -85,4 +85,4 @@ fig = plt.figure(2)
 ax2 = fig.add_subplot(111, projection='3d')
 ax2.plot_surface(X, Y, GPplot, color = 'red', rstride=2, cstride=2,
                  linewidth=0, antialiased=True, shade = True, alpha = 0.6)
-plt.savefig("plots/ordinary-2.pdf")
+plt.savefig("MB-ordinary.pdf")
