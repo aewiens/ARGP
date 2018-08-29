@@ -3,7 +3,7 @@ import os
 import GPy
 import numpy as np
 import matplotlib.pyplot as plt
-from ARGP import largp
+from ARGP import nargp
 from ARGP import matrix
 from ARGP import ordinary
 
@@ -37,31 +37,19 @@ X1, Y1 = np.split(T1, 2, axis=1)
 Ntest = 100
 Xtest = matrix.Col(np.linspace(0.8, 2.34, Ntest))
 
-# ===============================================
-# Optimize level 0
-# ===============================================
-# Using GPy
-#m0 = ordinary.optimize(X0, Y0)
-m0_params = ordinary.my_optimize(X0, Y0)
-
-# ===============================================
 # Optimize level 1
-# ===============================================
-#mu0, C0 = ordinary.predict(m0, X1, full_cov=True)
-mu0, C0 = ordinary.my_predict(X1, X0, Y0, *m0_params)
-m1 = largp.optimize(mu0, X1, Y1)
+m0 = ordinary.optimize(X0, Y0)
 
-# ===============================================
-# Predict level 0
-# ===============================================
-#mu0, C0 = ordinary.predict(m0, Xtest, full_cov=True)
-mu0, C0 = ordinary.my_predict(Xtest, X0, Y0, *m0_params)
+# Optimize level 2
+mu0, C0 = ordinary.predict(m0, X1, full_cov=True)
+m1 = nargp.optimize(mu0, X1, Y1)
+
+# Predict level 1
+mu0, C0 = ordinary.predict(m0, Xtest, full_cov=True)
 S0 = np.sqrt(np.diag(C0))
 
-# ===============================================
-# Predict Level 1
-# ===============================================
-mu1, C1 = largp.predict(m1, mu0, C0, Xtest)
+# Predict Level 2
+mu1, C1 = nargp.predict(m1, mu0, C0, Xtest)
 S1 = np.sqrt(C1)
 
 # Row vectors for plotting
@@ -88,4 +76,4 @@ if __name__ == '__main__':
     plt.plot(E1[:, 0], E1[:, 1], c='r', lw=2)
     plt.plot(grid, mu1, 'k--', lw=2)
     plt.tight_layout()
-    plt.savefig("01-largp.pdf", transparent=True)
+    plt.savefig("1-nargp-N2.pdf", transparent=True)

@@ -22,14 +22,13 @@ Ntest = 100
 Xtest = matrix.Col(np.linspace(0.8, 2.34, Ntest))
 
 # Train ordinary model
-#m1_params = ordinary.my_optimize(X, Y)
-#mu, C = ordinary.my_predict(Xtest, X, Y, *m1_params)
 m = ordinary.optimize(X, Y, normalize=True)
 mu, C = m.predict(Xtest, full_cov=True)
 S = np.sqrt(np.diag(C))
 mu, S = np.ravel(mu), np.ravel(S)
 rmse = 1000*matrix.RMSE(mu, E[:, 1])
-print(rmse)
+
+print("Prediction Error: {:>9.4f} cm-1".format(rmse))
 
 if __name__ == '__main__':
 
@@ -49,4 +48,4 @@ if __name__ == '__main__':
     plt.plot(grid, mu, 'k--', lw=2, label='GP prediction')
     plt.tight_layout()
     plt.legend()
-    plt.savefig("ordinary.pdf", transparent=True)
+    plt.savefig("ordinary-N2.pdf", transparent=True)
