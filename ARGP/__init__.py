@@ -3,4 +3,4 @@ from . import ordinary
 from . import largp
 from . import kernel
 
-__all__ = ['matrix', 'ordinary', 'largp', 'kernel']
+__all__ = ['matrix', 'ordinary', 'largp', 'nargp', 'kernel']
