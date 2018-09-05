@@ -15,7 +15,7 @@ def RMSE(pred, truth):
     return np.sqrt(np.mean((pred-truth)**2))
 
 # Create test set
-Xtest = E[:, 0:-1]
+Xtest = E[:, :-1]
 
 # Create training set
 N1 = 100
@@ -31,12 +31,12 @@ model = ordinary.optimize(X1, Y1, kernel, normalize=True, restarts=10)
 mu, v = ordinary.predict(model, Xtest)
 
 # Calculate error
-Exact = E[:, 2].reshape(-1, 1)
-print("error: ", 1000 * RMSE(mu, Exact))
+rmse = 1000 * RMSE(mu.flatten(), E[:, -1])  # millihartrees
+print("RMSE: {:>10.5f} mEh".format(rmse))
 
 # Exact plot
 X, Y = np.meshgrid(X1[:, 0], X1[:, 1])
-Exactplot = ml.griddata(Xtest[:,0], Xtest[:,1], Exact[:, 0], X, Y, interp='linear')
+Exactplot = ml.griddata(Xtest[:,0], Xtest[:,1], E[:, -1], X, Y, interp='linear')
 fig = plt.figure(1)
 ax1 = fig.add_subplot(111, projection='3d')
 ax1.plot_surface(X, Y, Exactplot, color = '#377eb8', rstride=2, cstride=2,
