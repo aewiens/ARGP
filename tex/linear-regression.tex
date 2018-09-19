@@ -1,0 +1,41 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[margin=0.9cm]{geometry}
+
+\begin{document}
+
+\section{The Linear Regression Model}
+Suppose we want to model the relationship between some set of data points
+% picture of random data points
+In machine learning, the \textit{training set}, usually denoted by T, is the
+set of known data points used to inform a model.  \\[1ex]
+As a simple example, we will consider a set of data points in two dimensions, 
+$\{(x_1, y_1), ... , (x_n, y_n)\}$. \\[1ex]
+T is often written as a vector of data points. For our example
+system in 2 dimensions, T would look like this:
+\begin{equation*}
+	T
+=
+	\left[\mathrm{X}, \mathrm{Y} \right]
+=
+	\left[
+		\begin{array}{cc}
+			x_1    & y_1 \\
+			\vdots & \vdots \\
+			x_n    & y_n \\
+		\end{array}
+	\right]
+\end{equation*}
+The simplest way to model this process is via a \textit{linear regression}.\\[1ex]
+This means that we'll assume the system can be represented by a line.
+We'll assume that there is a linear relationship between these data points,
+i.e., there is some $\mathbf{w} = [w_1, w_2]$ such that $f(x) = w_2 x + w_1$ is
+an adequate representation of the system. \\
+% picture of data points with line
+We want to find the $\mathbf{w}$ that gives us the best possible (linear)
+representation of our data set-- the \textit{best fit line}. \\
+This $\mathbf{w}$ is the one that minimizes the error of the line at each
+training point. \\[1ex]
+However, to avoid error cancellation between opposite signs, we'll actually
+minimize the squared error of the line at each of the training points.
+\end{document}
