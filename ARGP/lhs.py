@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def latin_hypercube_1d(low, high, samples, seed=0):
+def latin_hypercube_samples(low, high, samples, seed=0, dtype='float'):
 
     # for reproducibility
     np.random.seed(seed)
@@ -15,11 +15,15 @@ def latin_hypercube_1d(low, high, samples, seed=0):
     b = cut[1:]
 
     # Transform uniform random samples, one into each interval
-    return u * (b - a) + a
+    samples = u * (b - a) + a
+
+    if dtype == 'float':
+        return samples
+
+    elif dtype == 'int':
+        return np.array([int(i) for i in samples])
 
 
 if __name__ == '__main__':
-
-    np.random.seed(0)
-    N2 = latin_hypercube_1d(0.8, 2.34, 100)
-    print(N2)
+    test = latin_hypercube_samples(0, 100, 20, dtype='int')
+    print(test)
