@@ -33,10 +33,22 @@ follows,
 \end{align*}
 \item where it is important to make the distinction that $Y(\cdot)$ is a
 Gaussian stochastic process characterized by mean function $\mu(\mathbf{x})$
-and covariance function $\Sigma(\mathbf{x}, \mathbf{x'})$, whereas Y(X) is a
-Gaussian probability distribution in $n$ dimensions, that is characterized by
-mean vector $\mu(\mathrm{X})$ and covariance matrix $\Sigma(\mathrm{X, X})$.
-\item 
+and covariance function $\Sigma(\mathbf{x}, \mathbf{x'})$, whereas $Y$(X) is
+the Gaussian process evaluated at a set of points.
+\item Thus $Y$(X) is a Gaussian probability distribution in $n$ dimensions,
+characterized by mean vector $\mu(\mathrm{X})$ and covariance matrix
+$\Sigma(\mathrm{X, X})$.
+\item While the variable $Y$ refers to the distribution itself, we will use
+lowercase $y$ to denote the mean of this distribution.
+\begin{equation*}
+	y(\mathrm{X})
+\sim
+	\mathcal{N}
+	\left(
+		\mu(\mathrm{X}),
+		\Sigma(\mathrm{X, X})
+	\right)
+\end{equation*}
 \end{itemize}
 
 \end{document}
