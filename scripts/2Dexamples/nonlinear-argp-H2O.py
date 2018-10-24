@@ -50,7 +50,7 @@ for s in seeds:
     # Level 2 training set
     N2 = 180
     idx2 = np.random.choice(idx, size=N2)
-    T2 = E2[idx]
+    T2 = E2[idx2]
     X2, Y2 = np.split(T2, [dim], axis=1)
 
     # Predict level 1 at X2
