@@ -29,7 +29,7 @@ X0, Y0 = np.split(T0, 2, axis=1)
 
 # Level 1 training set
 Nt1 = 8
-i1 = np.random.randint(0, len(E1), size=Nt1)
+i1 = np.random.choice(i0, size=Nt1)
 T1 = np.array([E1[i] for i in i1])
 X1, Y1 = np.split(T1, 2, axis=1)
 

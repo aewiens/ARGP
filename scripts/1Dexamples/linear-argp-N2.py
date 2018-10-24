@@ -45,7 +45,7 @@ X1, Y1 = np.split(T1, 2, axis=1)
 
 # Level 2 training set
 Nt2 = 15
-i2 = np.random.randint(0, len(E2), size=Nt2)
+i2 = np.random.choice(i1, size=Nt2)
 T2 = np.array([E2[i] for i in i2])
 X2, Y2 = np.split(T2, 2, axis=1)
 
