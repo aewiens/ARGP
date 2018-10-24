@@ -1,8 +1,9 @@
-import GPy
+iport GPy
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.mlab as ml
 from ARGP import ordinary
+from ARGP import lhs 
 
 E = np.loadtxt("surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
 E[:, 2] += 76.172634420318
@@ -21,6 +22,7 @@ Xtest = E[:, :-1]
 N1 = 100
 dim = 2
 
+#idx = lhs.latin_hypercube_samples(0, len(E), N1, dtype='int')
 idx = np.random.randint(0, len(E), size=N1)
 T = E[idx]
 X1, Y1 = np.split(T, [2], axis=1)
@@ -34,6 +36,7 @@ mu, v = ordinary.predict(model, Xtest)
 rmse = 1000 * RMSE(mu.flatten(), E[:, -1])  # millihartrees
 print("RMSE: {:>10.5f} mEh".format(rmse))
 
+"""
 # Exact plot
 X, Y = np.meshgrid(X1[:, 0], X1[:, 1])
 Exactplot = ml.griddata(Xtest[:,0], Xtest[:,1], E[:, -1], X, Y, interp='linear')
@@ -49,3 +52,4 @@ ax2 = fig.add_subplot(111, projection='3d')
 ax2.plot_surface(X, Y, GPplot, color = 'red', rstride=2, cstride=2,
                  linewidth=0, antialiased=True, shade = True, alpha = 0.6)
 plt.show()
+"""

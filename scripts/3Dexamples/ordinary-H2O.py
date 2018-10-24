@@ -1,6 +1,7 @@
 import GPy
 import numpy as np
 from ARGP import ordinary
+from ARGP import lhs
 
 E = np.loadtxt("surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
 E[:, -1] += 76.203896662997
@@ -25,7 +26,8 @@ seeds = np.arange(10)
 # Average over 10 Gaussian processes
 for i in range(10):
 
-    idx = np.random.randint(0, len(E), size=Nt)
+    idx = lhs.latin_hypercube_samples(0, len(E), Nt, seed=i, dtype='int')
+    #idx = np.random.randint(0, len(E), size=Nt)
     T = E[idx]
     X1, Y1 = np.split(T, [dim], axis=1)
 
