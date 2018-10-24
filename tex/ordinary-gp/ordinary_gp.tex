@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage[margin=0.9cm]{geometry}
+
+\begin{document}
+
+\section{Ordinary Gaussian Process Modeling}
+\begin{itemize}
+\item A Gaussian process (GP) is a continuous collection of random variables,
+any finite number of which have a joint Gaussian distribution.
+\item In other words, each GP is a distribution over functions whose
+values on X$= \{\mathbf{x}_1,...,\mathbf{x}_n\}$
+are normally distributed with mean vection $\mu(\mathrm{X})$ and covariance
+matrix $\Sigma(\mathrm{X, X})$.
+\item Using $Y$ to denote some Gaussian process, this can be written as
+follows,
+\begin{align*}
+	Y(\cdot)
+=
+	\mathcal{GP}
+	\left(
+		\mu(\mathbf{x}),
+		\Sigma(\mathbf{x}, \mathbf{x}')
+	\right)
+&& \implies &&
+	Y(\mathrm{X})
+=
+	\mathcal{N}
+	\left(
+		\mu(\mathrm{X}),
+		\Sigma(\mathrm{X, X})
+	\right)
+\end{align*}
+\item where it is important to make the distinction that $Y(\cdot)$ is a
+Gaussian stochastic process characterized by mean function $\mu(\mathbf{x})$
+and covariance function $\Sigma(\mathbf{x}, \mathbf{x'})$, whereas Y(X) is a
+Gaussian probability distribution in $n$ dimensions, that is characterized by
+mean vector $\mu(\mathrm{X})$ and covariance matrix $\Sigma(\mathrm{X, X})$.
+\item 
+\end{itemize}
+
+\end{document}
