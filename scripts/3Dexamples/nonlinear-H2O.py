@@ -18,7 +18,6 @@ def RMSE(pred, truth):
     return np.sqrt(np.mean((pred-truth)**2))
 
 
-
 # Test set
 Xtest = E2[:, :-1]
 Ntest = len(Xtest)
@@ -33,7 +32,7 @@ active_dimensions=np.arange(0, dim)
 
 # Average over 10 GPs
 errors=[]
-for i in range(10):
+for i in range(6):
 
     # Level 1 training set
     idx = np.random.randint(0, len(E1), size=N1)
@@ -47,7 +46,7 @@ for i in range(10):
 
     # Level 2 training set
     idx2 = np.random.choice(idx, size=N2)
-    T2 = E2[idx]
+    T2 = E2[idx2]
     X2, Y2 = np.split(T2, [dim], axis=1)
 
     # Predict level 1 at X2
@@ -68,11 +67,11 @@ for i in range(10):
     tmp_m = np.zeros((nsamples, Ntest))
     tmp_v = np.zeros((nsamples, Ntest))
 
-    for i in range(nsamples):
-        XX = np.hstack((Xtest, Z[i, :][:, np.newaxis]))
+    for j in range(nsamples):
+        XX = np.hstack((Xtest, Z[j, :][:, np.newaxis]))
         mu, v = m2.predict(XX)
-        tmp_m[i, :] = mu.flatten()
-        tmp_v[i, :] = v.flatten()
+        tmp_m[j, :] = mu.flatten()
+        tmp_v[j, :] = v.flatten()
 
     mu2 = np.mean(tmp_m, axis=0)
     C2 = np.abs(np.mean(tmp_v, axis = 0) + np.var(tmp_m, axis = 0))
