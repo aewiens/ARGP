@@ -71,7 +71,7 @@ def smart_random(dataset, n_train):
     x, y = np.split(dataset, [-1], axis=1)
     full_dataset_dist, binedges = np.histogram(y, bins='auto', density=True)
     pvalues = []
-    for seed in range(600):
+    for seed in range(500):
     #for seed in range(1):
         y_train = train_test_split(x, y, n_train=n_train, seed=seed)[2]
         train_dist, tmpbin = np.histogram(y_train, bins=binedges, density=True)
