@@ -44,9 +44,9 @@ def split(X, n_train, n_test=None, seed=None):
     return ind_train, ind_test
 
 
-def train_test_split(*arrays, n_train, seed=42):
+def train_test_split(*arrays, n_train, n_test=None, seed=42):
     arrays = indexable(*arrays)
-    train, test = split(X=arrays[0], n_train=n_train, seed=seed)
+    train, test = split(X=arrays[0], n_train=n_train, n_test=n_test, seed=seed)
     return list(chain.from_iterable((a[train], a[test]) for a in arrays))
 
 
@@ -62,7 +62,7 @@ def train_test_split2(*arrays, ind_train_1, ind_test_1, n_train, seed=42):
     #return list(chain.from_iterable((a[ind_train], a[ind_test]) for a in arrays))
 
 
-def smart_random(dataset, n_train):
+def smart_random(dataset, n_train, n_test):
     """
     choose a random training set that has an energy distribution most resembling that of the full dataset.
     uses the chi-squared method to estimate the similarity of the energy distrubtions.
@@ -73,13 +73,13 @@ def smart_random(dataset, n_train):
     pvalues = []
     for seed in range(500):
     #for seed in range(1):
-        y_train = train_test_split(x, y, n_train=n_train, seed=seed)[2]
+        y_train = train_test_split(x, y, n_train=n_train, n_test=n_test, seed=seed)[2]
         train_dist, tmpbin = np.histogram(y_train, bins=binedges, density=True)
         chisq, p = stats.chisquare(train_dist, f_exp=full_dataset_dist)
         pvalues.append(p)
     best_seed = np.argmax(pvalues)
     indices = np.arange(len(dataset))
-    ind_train, ind_test  = train_test_split(indices, n_train=n_train, seed=best_seed)
+    ind_train, ind_test  = train_test_split(indices, n_train=n_train, n_test=n_test, seed=best_seed)
 
     return ind_train, ind_test
 
@@ -108,10 +108,10 @@ def smart_random2(dataset, n_train, i1, i1_test):
 
 if __name__ == '__main__':
 
-    E1 = np.loadtxt("../surfaces/dz.dat", delimiter=',', skiprows=1)
-    E2 = np.loadtxt("../surfaces5z.dat", delimiter=',', skiprows=1)
+    E1 = np.loadtxt("../scripts/3Dexamples/surfaces/ccsd-t-dz.dat", delimiter=',', skiprows=1)
+    E2 = np.loadtxt("../scripts/3Dexamples/surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
 
-    i1, i1_test = smart_random(E2, 10)
+    i1, i1_test = smart_random(E1, 10, 100)
     i2, i2_test = smart_random2(E2, 4, i1, i1_test)
     """
     #Xtrain, Ytrain, Xtest, Ytest = train_test_split2(X, Y, ind_train_1=i1, ind_test_1=i1_test, n_train_2=4, seed=1)
