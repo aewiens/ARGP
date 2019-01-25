@@ -17,7 +17,7 @@ def optimize(mu0, X, Y, normalize=False, restarts=10):
     return model
 
 
-def predict(model, mu0, C0, grid, nsamples=500):
+def predict(model, mu0, C0, grid, nsamples=1000):
 
     Nts = len(grid)
 
@@ -29,7 +29,7 @@ def predict(model, mu0, C0, grid, nsamples=500):
     tmp_v = np.zeros((nsamples, Nts))
     for i in range(nsamples):
         XX = np.hstack((grid, matrix.Col(Z[i,:])))
-        mu, v = model.predict_noiseless(XX)
+        mu, v = model.predict(XX)
         tmp_m[i,:] = mu.flatten()
         tmp_v[i,:] = v.flatten()
 
