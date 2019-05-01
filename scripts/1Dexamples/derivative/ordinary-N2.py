@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import os
+import GPy
 import numpy as np
-from ARGP import ordinary
 from ARGP import matrix
 import matplotlib.pyplot as plt
 
 
 # Load ab initio surface
-E_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'surfaces')
+E_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../surfaces')
 E = np.loadtxt(os.path.join(E_path, 'mrci-pcv5z.tab'))
 E[:, 1] += 109.15851906  # dissociation limit
 
@@ -19,13 +19,19 @@ X, Y = np.split(E[index], 2, axis=1)
 # Test set
 Xtest = E[:, 0].reshape(-1, 1)
 
-# Train ordinary model
-m = ordinary.optimize(X, Y, normalize=True)
+# Hyperpararmeter optimizations
+k = GPy.kern.RBF(1)
+m = GPy.models.GPRegression(X=X, Y=Y, kernel=k, normalizer=True)
+m.optimize(max_iters=500)
+m.optimize_restarts(12, optimizer="bfgs", max_iters=1000)
+
+# Prediction
 mu, C = m.predict(Xtest, full_cov=True)
 S = np.sqrt(np.diag(C))
 mu, S = np.ravel(mu), np.ravel(S)
 rmse = 1000*matrix.RMSE(mu, E[:, 1])
 
+dmu = np.ravel(m.predictive_gradients(Xtest, kern=k)[0])
 print("Prediction Error: {:>9.4f} cm-1".format(rmse))
 
 if __name__ == '__main__':
@@ -34,8 +40,8 @@ if __name__ == '__main__':
     ns = 3
 
     # Plotting
-    plt.xlim(0.8, 2.35)
-    plt.ylim(-0.4, 0.6)
+    plt.xlim(0.8, 2.3)
+    plt.ylim(-1.0, 1.0)
 
     grid = np.ravel(Xtest)
 
@@ -44,6 +50,7 @@ if __name__ == '__main__':
     plt.fill_between(grid, mu + ns * S, mu - ns * S, alpha=0.2, color='k', label='Confidence interval')
     plt.plot(E[:, 0], E[:, 1], c='r', lw=2, label='Target')
     plt.plot(grid, mu, 'k--', lw=2, label='GP prediction')
+    plt.plot(grid, 0.25 * dmu, lw=2, label='Predictive gradient')
     plt.tight_layout()
     plt.legend()
     plt.savefig("ordinary-N2.pdf", transparent=True)
