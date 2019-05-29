@@ -32,6 +32,7 @@ mu, S = np.ravel(mu), np.ravel(S)
 rmse = 1000*matrix.RMSE(mu, E[:, 1])
 
 dmu = np.ravel(m.predictive_gradients(Xtest, kern=k)[0])
+print(dmu[10:20])
 print("Prediction Error: {:>9.4f} cm-1".format(rmse))
 
 if __name__ == '__main__':
