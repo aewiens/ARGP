@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-import os
 import GPy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,13 +7,9 @@ from ARGP import ordinary
 
 np.random.seed(10)
 
-# Size of confidence interval
-ns = 3
-
 # Load ab initio surfaces
-E_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'surfaces')
-E0 = np.loadtxt(os.path.join(E_path, 'cas-sto3g.tab'))
-E1 = np.loadtxt(os.path.join(E_path, 'mrci-pcv5z.tab'))
+E0 = np.loadtxt('surfaces/cas-sto3g.tab')
+E1 = np.loadtxt('surfaces/mrci-pcv5z.tab')
 
 # Set zeros at dissociation limits
 E0[:, 1] += 107.43802032
@@ -57,10 +51,13 @@ mu0, S0 = np.ravel(mu0), np.ravel(S0)
 mu1, S1 = np.ravel(mu1), np.ravel(S1)
 
 # Prediction error
-rmse = 1000 * matrix.RMSE(mu1, E1[:, 1])
-print(rmse)
+rmse = 1000 * np.sqrt(((mu - E[:, 1])**2).mean())
+print("Prediction Error: {:>9.4f} cm-1".format(rmse))
 
 if __name__ == '__main__':
+    # Size of confidence interval
+    ns = 3
+
     # Plotting
     plt.xlim(0.8, 2.35)
     plt.ylim(-0.4, 0.6)
@@ -76,4 +73,4 @@ if __name__ == '__main__':
     plt.plot(E1[:, 0], E1[:, 1], c='r', lw=2)
     plt.plot(grid, mu1, 'k--', lw=2)
     plt.tight_layout()
-    plt.savefig("1-nargp-N2.pdf", transparent=True)
+    plt.savefig("nargp-N2.pdf", transparent=True)
