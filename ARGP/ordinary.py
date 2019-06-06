@@ -68,7 +68,7 @@ def my_optimize(x, y, maxiter=500, restarts=10, optimizer='bfgs'):
 
 def predict(model, grid, full_cov=False):
     """ OGP prediction """
-    return model.predict_noiseless(grid, full_cov=full_cov)
+    return model.predict(grid, full_cov=full_cov)
 
 
 def my_predict(grid, x, y, var, ls, gvar):

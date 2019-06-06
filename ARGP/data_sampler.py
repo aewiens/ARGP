@@ -107,6 +107,50 @@ def smart_random2(dataset, n_train, i1, i1_test):
     return ind_train, ind_test
 
 
+def structure_based(data, n_train, n_test):
+
+    # always train on equilibrium geometry
+    train = [data[0]]
+
+    def norm(train_point, data=data):
+        # Compute norm between equilibrium geometry and every point in dataset
+        tmp1 = np.tile(train_point[:-1], (data.shape[0], 1))
+        diff = tmp1 - data[:, :-1]
+        norm_vector = np.sqrt(np.einsum('ij, ij->i', diff, diff))
+        return norm_vector
+
+    # accept farthest point from 1st training point as the 2nd training point
+    norm_vector_1 = norm(train[0])
+    idx = np.argmax(norm_vector_1)
+    newtrain = data[idx]
+    train.append(newtrain)
+
+    # create norm matrix, whose rows are all the norms to 1st and 2nd training points 
+    norm_vector_2 = norm(train[1])
+    norm_matrix = np.vstack((norm_vector_1, norm_vector_2))
+
+    # find the minimum value along the columns of this 2xN array of norms
+    min_array = np.amin(norm_matrix, axis=0)
+    train_indices = [0, idx]
+
+    while len(train) < n_train:
+        # min_array contains the smallest norms into the training set, by datapoint.
+        # We take the largest one.
+        idx = np.argmax(min_array)
+        train_indices.append(idx)
+        new_geom = data[idx]
+        train.append(new_geom)
+        # update norm matrix with the norms of newly added training point
+        norm_vec = norm(train[-1])
+        stack = np.vstack((min_array, norm_vec))
+        min_array = np.amin(stack, axis=0)
+
+    indices = np.arange(len(data))
+    test_indices = np.delete(indices, indices[train_indices])
+    train_indices = np.asarray(train_indices)
+    return train_indices, test_indices
+
+
 if __name__ == '__main__':
 
     E1 = np.loadtxt("../scripts/3Dexamples/surfaces/ccsd-t-dz.dat", delimiter=',', skiprows=1)
@@ -115,5 +159,8 @@ if __name__ == '__main__':
     E1x, E1y = np.split(E1, [-1], axis=1)
     E2x, E2y = np.split(E2, [-1], axis=1)
 
-    train1, test1 = split(E1x, 10)
-    train2, test2 = smart_random2(E2, 5, train1, test1)
+    test = structure_based(E2, 200, 200)
+    print(test)
+
+    #train1, test1 = split(E1x, 10)
+    #train2, test2 = smart_random2(E2, 5, train1, test1)
