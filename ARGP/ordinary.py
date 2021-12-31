@@ -25,7 +25,7 @@ def optimize(x, y, k=GPy.kern.RBF(1), maxiter=500, restarts=10, normalize=True):
     """
     model = GPy.models.GPRegression(X=x, Y=y, kernel=k, normalizer=normalize)
     model.optimize(max_iters=maxiter)
-    model.optimize_restarts(restarts, optimizer="bfgs", max_iters=1000)
+    model.optimize_restarts(restarts, optimizer="bfgs", max_iters=2000)
 
     return model
 

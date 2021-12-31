@@ -1,8 +1,8 @@
 import GPy
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib.mlab as ml
 from ARGP import ordinary
+from ARGP import data_sampler
 
 E1 = np.loadtxt("surfaces/ccsd-t-dz.dat", delimiter=',', skiprows=1)
 E2 = np.loadtxt("surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
@@ -11,43 +11,34 @@ E2 = np.loadtxt("surfaces/ccsd-t-5z.dat", delimiter=',', skiprows=1)
 E1[:, -1] += 76.240075372915
 E2[:, -1] += 76.174584084555
 
-
-def RMSE(pred, truth):
-    pred = pred.flatten()
-    truth = truth.flatten()
-    return np.sqrt(np.mean((pred-truth)**2))
-
-
 # Test set
 Xtest = E2[:, :-1]
 Ntest = len(Xtest)
 
 # Training set sizes
-N1 = 300
-N2 = 50
+Nt1 = [140]
+Nt2 = [25]
 
 # Dimensions of system
 dim = 3
 active_dimensions=np.arange(0, dim)
 
-# Average over 10 GPs
-errors=[]
-for i in range(6):
+f = open("rmse.dat", "a")
+
+for N1, N2 in zip(Nt1, Nt2):
 
     # Level 1 training set
-    idx = np.random.randint(0, len(E1), size=N1)
-    T1 = E1[idx]
-    X1, Y1 = np.split(T1, [dim], axis=1)
+    train, test = data_sampler.smart_random(E1, N1, n_test=None)
+    X1, Y1 = np.split(E1[train], [dim], axis=1)
 
     #  Train level 1
     k1 = GPy.kern.RBF(dim, ARD=True)
-    m1 = ordinary.optimize(X1, Y1, k1, normalize=True, restarts=10)
+    m1 = ordinary.optimize(X1, Y1, k1, normalize=True, restarts=12)
     mu1, v1 = ordinary.predict(m1, Xtest, full_cov=True)
 
     # Level 2 training set
-    idx2 = np.random.choice(idx, size=N2)
-    T2 = E2[idx2]
-    X2, Y2 = np.split(T2, [dim], axis=1)
+    train2, test2 = data_sampler.smart_random2(E2, N2, train, test)
+    X2, Y2 = np.split(E2[train2], [dim], axis=1)
 
     # Predict level 1 at X2
     mu1_, v1_ = ordinary.predict(m1, X2, full_cov=True)
@@ -57,11 +48,11 @@ for i in range(6):
     k2 = GPy.kern.RBF(1, active_dims = [dim]) * GPy.kern.RBF(dim, active_dims = active_dimensions, ARD = True) \
         + GPy.kern.RBF(dim, active_dims = active_dimensions, ARD = True)
     m2 = GPy.models.GPRegression(X=XX, Y=Y2, kernel=k2, normalizer=True)
-    m2.optimize(max_iters=500)
-    m2.optimize_restarts(10, optimizer='bfgs', max_iters=100)
+    m2.optimize(max_iters=1000)
+    m2.optimize_restarts(12, optimizer='bfgs', max_iters=1000)
 
     # Predict level 2
-    nsamples = 200
+    nsamples = 500
     Z = np.random.multivariate_normal(mu1.flatten(), v1, nsamples)
 
     tmp_m = np.zeros((nsamples, Ntest))
@@ -78,15 +69,10 @@ for i in range(6):
 
     # Calculate error
     exact = E2[:, -1]
-    error = 219474 * RMSE(mu2, exact)
-    errors.append(error)
+    error = 1000 * np.sqrt(np.mean((mu2[test2] - exact[test2])**2))
+    etrain = 1000 * np.sqrt(np.mean((mu2[train2] - np.ravel(Y2))**2))
+    print("Prediction error: {:>5.3} mEh".format(error))
+    print("Training set error: {:>5.3} mEh".format(etrain))
+    f.write("{:>3d}{:>7.3f}{:>7.3f}".format(N2, error, etrain))
 
-
-print("----------------------------------------------")
-print("10 ARGP Regressions with {:3d} and {:3d} Data Points".format(N1, N2))
-print("----------------------------------------------")
-print("|    First RMSE: {:>10.5f}                   |".format(errors[0]))
-print("|     Best RMSE: {:>10.5f}                   |".format(min(errors)))
-print("|    Worst RMSE: {:>10.5f}                   |".format(max(errors)))
-print("|  Average RMSE: {:>10.5f}                   |".format(np.mean(errors)))
-print("----------------------------------------------")
+f.close()

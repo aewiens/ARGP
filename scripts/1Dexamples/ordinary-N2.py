@@ -2,12 +2,14 @@ import numpy as np
 from ARGP import ordinary
 import matplotlib.pyplot as plt
 
+np.random.seed(0)
+
 # Load ab initio surface
 E = np.loadtxt("surfaces/mrci-pcv5z.tab")
 E[:, 1] += 109.15851906
 
 # Training set
-Nt = 20
+Nt = 10
 index = np.random.randint(0, len(E), size=Nt)
 X, Y = np.split(E[index], 2, axis=1)
 
@@ -21,7 +23,7 @@ S = np.sqrt(np.diag(C))
 mu, S = np.ravel(mu), np.ravel(S)
 rmse = 1000 * np.sqrt(((mu - E[:, 1])**2).mean())
 
-print("Prediction Error: {:>9.4f} cm-1".format(rmse))
+print("Prediction Error: {:>9.4f} mEh".format(rmse))
 
 
 if __name__ == '__main__':
